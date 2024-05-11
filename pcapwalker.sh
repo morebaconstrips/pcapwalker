@@ -3,9 +3,7 @@ set -e
 set -u
 
 function usage {
-    echo "Usage:"
-    echo "$0 {path to pcap/pcapng file}\
-    {optional: name of the file to store results - defaults to pcap_analyzer.txt}"
+    echo "Usage: $0 {path to pcap/pcapng file} {optional: name of the file to store results - defaults to pcap_analyzer.txt}"
     echo "Example: ./$0 network_traffic.pcap"
     exit 1
 }
@@ -74,13 +72,14 @@ msg "$PCAP_FILE"
 msg ""
 
 msg "***HTTP Traffic***"
-tshark -r "$PCAP_FILE" -Y "http" -T fields -e http.host -e http.request.uri | tee -a "$FILE"
+tshark -r "$PCAP_FILE" -Y "http" | tee -a "$FILE" #-T fields -e frame.number -e http.host -e http.request.uri | tee -a "$FILE"
 msg ""
 
 msg "***DNS Requests***"
 tshark -r "$PCAP_FILE" -Y "dns" -T fields -e dns.qry.name | tee -a "$FILE"
 msg ""
 
+#FIXME: Check if this search makes sense and, if so, fix it
 msg "***SMTP Traffic***"
 tshark -r "$PCAP_FILE" -Y "smtp" -T fields -e smtp.mailfrom -e smtp.rcptto | tee -a "$FILE"
 msg ""
