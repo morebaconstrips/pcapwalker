@@ -44,7 +44,6 @@ if [[ ! -f "$PATTERNS_FILE" ]]; then
     exit 1
 fi
 
-# Perform analysis
 msg "***PCAP File***"
 msg "$PCAP_FILE"
 msg ""
@@ -82,14 +81,19 @@ do
     tshark -r "$PCAP_FILE" -Y "frame matches \"(?i)$pattern\"" -T fields -e frame.number -e frame.time -e frame.len -e data.data | tee -a "$FILE"
     msg ""
 done
-#while IFS= read -r pattern; do
-#done < "$PATTERNS_FILE"
-#msg ""
+
+msg "***Check for known malicious domains***"
+# Check for known malicious domains
+while IFS=, read -r domain malware date_added source; do
+    if grep -q "$domain" "$FILE"; then
+        msg "- Potential malware communication detected with domain: $domain (Malware: $malware, Date added: $date_added, Source: $source)"
+    fi
+done < blackbook.csv
 
 msg "***Identified Vulnerabilities***"
-msg "No vulnerabilities identified in this version of the script."
-msg "##################################### End of Analysis"
-msg ""
+#TODO: Implement
 
+msg ""
 msg "***Analysis Complete***"
 
+echo "Results saved in $FILE"
