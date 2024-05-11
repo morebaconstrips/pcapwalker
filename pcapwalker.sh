@@ -5,7 +5,7 @@ set -u
 function usage {
     echo "Usage:"
     echo "$0 {path to pcap/pcapng file}\
- {optional: name of the file to store results - defaults to pcap_analyzer.txt}"
+    {optional: name of the file to store results - defaults to pcap_analyzer.txt}"
     echo "Example: ./$0 network_traffic.pcap"
     exit 1
 }
@@ -22,27 +22,52 @@ function getArray {
     done < "$1"
 }
 
-if [[ $# -gt 2 || $# -lt 1 ]]; then
-    usage
-fi
+function check_dependency {
+    command -v "$1" >/dev/null 2>&1 || { echo >&2 "Error: $1 is required but not found. Aborting."; exit 1; }
+}
 
-PCAP_FILE="$1"
-if [[ $# -eq 2 ]]; then
-    FILE="$2"
-else
-    FILE="pcap_analyzer.txt"
-fi
+function check_permissions {
+    if [[ ! -r "$1" ]]; then
+        echo "Error: Cannot read $1. Check permissions."
+        exit 1
+    fi
+}
 
-# Remove previous file if it exists, is a file and doesn't point somewhere
-if [[ -e "$FILE" && ! -h "$FILE" && -f "$FILE" ]]; then
-    rm -f "$FILE"
-fi
+function validate_input {
+    if [[ $# -gt 2 || $# -lt 1 ]]; then
+        usage
+    fi
 
-PATTERNS_FILE="patterns.txt"
-if [[ ! -f "$PATTERNS_FILE" ]]; then
-    echo "Error: patterns file not found: $PATTERNS_FILE"
-    exit 1
-fi
+    PCAP_FILE="$1"
+    if [[ ! -f "$PCAP_FILE" ]]; then
+        echo "Error: The specified pcap file '$PCAP_FILE' does not exist or is not a regular file."
+        exit 1
+    fi
+
+    if [[ $# -eq 2 ]]; then
+        FILE="$2"
+    else
+        FILE="pcap_analyzer.txt"
+    fi
+
+    # Remove previous file if it exists, is a file and doesn't point somewhere
+    if [[ -e "$FILE" && ! -h "$FILE" && -f "$FILE" ]]; then
+        rm -f "$FILE"
+    fi
+
+    PATTERNS_FILE="patterns.txt"
+    if [[ ! -f "$PATTERNS_FILE" ]]; then
+        echo "Error: patterns file not found: $PATTERNS_FILE"
+        exit 1
+    fi
+}
+
+check_dependency tshark
+
+validate_input "$@"
+
+check_permissions "$PCAP_FILE"
+check_permissions "$PATTERNS_FILE"
 
 msg "***PCAP File***"
 msg "$PCAP_FILE"
