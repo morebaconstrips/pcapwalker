@@ -1,5 +1,7 @@
 # PCAPWalker
 
+![logo](https://github.com/morebaconstrips/pcapwalker/blob/main/logo.png)
+
 PCAP Walker is a script for analyzing pcap/pcapng network traffic capture files. It extracts various types of network traffic, searches for specific keywords in packets, checks for known malicious domains, and finds known vulnerabilities (not implemented yet)
 
 ## Features
