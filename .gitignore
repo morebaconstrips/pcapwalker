@@ -1,2 +1,5 @@
 # Ignore output file
 pcap_analyzer.txt
+
+# Ignore built code
+pcapwalker
