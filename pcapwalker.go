@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bytes"
 	"bufio"
 	"fmt"
 	"os"
@@ -79,7 +80,46 @@ func validateInput(args []string) (string, string) {
 	return pcapFile, outputFile
 }
 
-func runTshark(pcapFile, filter string, fields []string) (string) {
+
+
+func filter(output string, numFields int) string {
+    lines := strings.Split(output, "\n")
+    var builder strings.Builder
+
+    for _, line := range lines {
+        fields := strings.Fields(line)
+        if len(fields) == numFields {
+            for _, field := range fields {
+                if field == "" {
+                    goto nextLine
+                }
+            }
+            builder.WriteString(line)
+            builder.WriteString("\n")
+        }
+    nextLine:
+    }
+
+    return builder.String()
+}
+
+func unique(output string) string {
+	lines := strings.Split(output, "\n")
+	uniqueLines := make(map[string]bool)
+	var buffer bytes.Buffer
+
+	for _, line := range lines {
+		if _, seen := uniqueLines[line]; !seen && line != "" {
+			uniqueLines[line] = true
+			buffer.WriteString(line)
+			buffer.WriteString("\n")
+		}
+	}
+
+	return buffer.String()
+}
+
+func runTshark(pcapFile, filter string, fields []string) string {
 	args := []string{"-r", pcapFile, "-Y", filter, "-T", "fields"}
 	for _, field := range fields {
 		args = append(args, "-e", field)
@@ -90,7 +130,7 @@ func runTshark(pcapFile, filter string, fields []string) (string) {
 		fmt.Fprintf(os.Stderr, "Error running tshark: %v\n", err)
 		os.Exit(1)
 	}
-	return string(output)
+	return unique(string(output))
 }
 
 func main() {
@@ -119,6 +159,7 @@ func main() {
 	msg(file, "***HTTP Traffic***")
 	fields := []string{"frame.number", "http.host", "http.request.uri"}
 	output := runTshark(pcapFile, "http", fields)
+	output = filter(output, len(fields))
 	msg(file, output)
 
 	msg(file, "***DNS Requests***")
@@ -177,8 +218,11 @@ func main() {
 		}
 	}
 
-	msg(file, "***Identified Vulnerabilities***")
-	//TODO: Implement
+	msg(file, "***Security Scan***")
+	ntpVersion := getNTPVersion(pcapFile)
+	if ntpVersion != "" {
+	    msg(file, ntpVersion)
+	}
 
 	msg(file, "")
 	msg(file, "***Analysis Complete***")
