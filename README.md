@@ -13,7 +13,6 @@ PCAP Walker is a script for analyzing pcap/pcapng network traffic capture files.
 
 ## Requirements
 
-- Bash shell
 - Go
 - tshark (Wireshark command-line utility)
 - A pcap/pcapng network traffic capture file to analyze
@@ -21,15 +20,9 @@ PCAP Walker is a script for analyzing pcap/pcapng network traffic capture files.
 
 ## Usage
 
-### Go script
-```go
-go build pcapwalker.go
+```bash
+Makefile build
 ```
 ```go
 ./pcapwalker [path to pcap/pcapng file] [optional: name of the output file]
-```
-
-### Bash script
-```bash
-./pcapwalker.sh [path to pcap/pcapng file] [optional: name of the output file]
 ```
