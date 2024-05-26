@@ -81,7 +81,6 @@ func validateInput(args []string) (string, string) {
 }
 
 
-
 func filter(output string, numFields int) string {
     lines := strings.Split(output, "\n")
     var builder strings.Builder
@@ -218,12 +217,44 @@ func main() {
 		}
 	}
 
-	msg(file, "***Security Scan***")
+	msg(file, "\n***Security Scan***")
+	msg(file, "-------------------- NTP version --------------------")
 	ntpVersion := getNTPVersion(pcapFile)
 	if ntpVersion != "" {
 	    msg(file, ntpVersion)
 	}
 
+	msg(file, "\n-------------------- SSL/TLS --------------------")
+	numHandshakes, negotiatedTLSVersion, negotiatedCipherSuite := getSSL(pcapFile)
+	msg(file, fmt.Sprintf("Number of SSL/TLS handshakes: %d", numHandshakes))
+	msg(file, "\nNegotiated TLS versions:")
+	for version := range negotiatedTLSVersion {
+		msg(file, version)
+	}
+	msg(file, "\nNegotiated Cipher Suites:")
+	for cipherSuite := range negotiatedCipherSuite {
+		msg(file, cipherSuite)
+	}
+
+	cipherSuiteBlacklistMap := make(map[string]bool)
+	for _, cipherSuite := range CIPHER_SUITE_BLACKLIST {
+	    cipherSuiteBlacklistMap[cipherSuite] = true
+	}
+	vulnerableCipherSuites := make(map[string]bool)
+	for cipherSuite := range negotiatedCipherSuite {
+	    if _, ok := cipherSuiteBlacklistMap[cipherSuite]; ok {
+	        vulnerableCipherSuites[cipherSuite] = true
+	    }
+	}
+	
+	vulnerableCipherSuitesSlice := make([]string, 0, len(vulnerableCipherSuites))
+	for cipherSuite := range vulnerableCipherSuites {
+    vulnerableCipherSuitesSlice = append(vulnerableCipherSuitesSlice, cipherSuite)
+	}
+	if len(vulnerableCipherSuites) > 0 {
+		msg(file, fmt.Sprintf("\n%d vulnerable cipher suite detected: %s", len(vulnerableCipherSuites), strings.Join(vulnerableCipherSuitesSlice, ", ")))
+	}
+	
 	msg(file, "")
 	msg(file, "***Analysis Complete***")
 
