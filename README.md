@@ -1,6 +1,6 @@
 # PCAPWalker
 
-PCAP Walker is a Bash script for analyzing pcap/pcapng network traffic capture files. It extracts various types of network traffic, searches for specific keywords in packets, checks for known malicious domains, and finds known vulnerabilities (not implemented yet)
+PCAP Walker is a script for analyzing pcap/pcapng network traffic capture files. It extracts various types of network traffic, searches for specific keywords in packets, checks for known malicious domains, and finds known vulnerabilities (not implemented yet)
 
 ## Features
 
@@ -12,12 +12,22 @@ PCAP Walker is a Bash script for analyzing pcap/pcapng network traffic capture f
 ## Requirements
 
 - Bash shell
+- Go
 - tshark (Wireshark command-line utility)
 - A pcap/pcapng network traffic capture file to analyze
 - Optional: A patterns.txt file containing specific keywords to search for in packets
 
 ## Usage
 
+### Go script
+```go
+go build pcapwalker.go
+```
+```go
+./pcapwalker [path to pcap/pcapng file] [optional: name of the output file]
+```
+
+### Bash script
 ```bash
 ./pcapwalker.sh [path to pcap/pcapng file] [optional: name of the output file]
 ```
