@@ -1,0 +1,8 @@
+admin
+root
+password
+passwd
+pwd
+ssl
+private key
+secret
