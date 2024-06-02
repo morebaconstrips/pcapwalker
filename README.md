@@ -7,14 +7,14 @@ PCAP Walker is a script for analyzing pcap/pcapng network traffic capture files.
 ## Features
 
 - Analyze HTTP, DNS, SMTP, FTP, SSH, and Telnet traffic.
-- Search for specific keywords in packets.
-- Check for potential malware communication based on known malicious domains.
 - Lookup of every IP involved in the communication
     - Country
     - City
     - Postal Code
     - Latitude
     - Longitude
+- Search for specific keywords in packets.
+- Check for potential malware communication based on known malicious domains.
 - Security scan
     - Deprecated or insecure protocols
     - Vulnerable cipher suites
