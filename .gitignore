@@ -7,5 +7,6 @@ pcapwalker
 # Ignore shell version
 pcapwalker.sh
 
-# Ignore GeoLite2 directory
+# Ignore GeoLite2 directories
 GeoLite2-City_20240531
+GeoLite2-ASN_20240531
