@@ -186,8 +186,8 @@ func main() {
 	msg(file, "***IP Analysis***")
 	geoInfos, _ := utils.PrintGeoInfoForIPs(pcapFile)
     for _, geoInfo := range geoInfos {
-        fmt.Printf("IP: %s\nCountry: %s\nCity: %s\nPostal Code: %s\nLatitude: %f\nLongitude: %f\n\n",
-            geoInfo.IP, geoInfo.Country, geoInfo.City, geoInfo.Postal, geoInfo.Lat, geoInfo.Lon)
+        fmt.Printf("IP: %s\nCountry: %s\nCity: %s\nPostal Code: %s\nLatitude: %f\nLongitude: %f\nOrganization: %s\n\n",
+            geoInfo.IP, geoInfo.Country, geoInfo.City, geoInfo.Postal, geoInfo.Lat, geoInfo.Lon, geoInfo.Organization)
     }
 
 	msg(file, "***Search for specific keywords in packets***")
