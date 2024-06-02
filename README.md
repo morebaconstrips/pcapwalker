@@ -32,12 +32,12 @@ PCAP Walker is a script for analyzing pcap/pcapng network traffic capture files.
   ```bash
   go get -u github.com/oschwald/geoip2-golang
   ```
-- Download the free GeoLite2 City database from MaxMind's website. You need to sign up for a free account to access the download.
-- Extract the .tar.gz file:
+- Download the free GeoLite2 City and GeoLite2 ASN databases from MaxMind's website. You need to sign up for a free account to access the download.
+- Extract the .tar.gz files:
   ```bash
-  tar -xzvf GeoLite2-City.tar.gz -C ~/pcapwalker/
+  tar -xzvf GeoLite2-City_<todaysdate>.tar.gz && mv GeoLite2-City_<todaysdate>/GeoLite2-City.mmdb ~/pcapwalker/data/
+  tar -xzvf GeoLite2-ASN_<todaysdate>.tar.gz && mv GeoLite2-ASN_<todaysdate>/GeoLite2-ASN.mmdb ~/pcapwalker/data/
   ```
-Make sure GeoLite2-City_*/GeoLite2-City.mmdb is in the project root directory
 
 ## Usage
 
