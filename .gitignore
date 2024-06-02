@@ -3,3 +3,6 @@ pcap_analyzer.txt
 
 # Ignore built code
 pcapwalker
+
+# Ignore shell version
+pcapwalker.sh
