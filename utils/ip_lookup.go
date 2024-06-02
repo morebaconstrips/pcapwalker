@@ -11,48 +11,61 @@ import (
 )
 
 type GeoInfo struct {
-    IP      string
-    Country string
-    City    string
-    Postal  string
-    Lat     float64
-    Lon     float64
+    IP           string
+    Country      string
+    City         string
+    Postal       string
+    Lat          float64
+    Lon          float64
+    Organization string
 }
 
 func geoIPLookup(ip string) (*GeoInfo, error) {
-    db, err := geoip2.Open("GeoLite2-City_20240531/GeoLite2-City.mmdb")
+    cityDB, err := geoip2.Open("data/GeoLite2-City.mmdb")
     if err != nil {
         return nil, err
     }
-    defer db.Close()
+    defer cityDB.Close()
+
+    asnDB, err := geoip2.Open("data/GeoLite2-ASN.mmdb")
+    if err != nil {
+        return nil, err
+    }
+    defer asnDB.Close()
 
     ipAddr := net.ParseIP(ip)
     if ipAddr == nil {
         return nil, errors.New("invalid IP address")
     }
 
-    record, err := db.City(ipAddr)
+    cityRecord, err := cityDB.City(ipAddr)
     if err != nil {
         return nil, err
     }
 
-    country, ok := record.Country.Names["en"]
+    asnRecord, err := asnDB.ASN(ipAddr)
+    if err != nil {
+        return nil, err
+    }
+
+    country, ok := cityRecord.Country.Names["en"]
     if !ok {
         return nil, errors.New("no English name for this country")
     }
 
-    city, ok := record.City.Names["en"]
+    city, ok := cityRecord.City.Names["en"]
     if !ok {
         city = "N/A"
     }
 
     geoInfo := &GeoInfo{
-        IP:      ip,
-        Country: country,
-        City:    city,
-        Postal:  record.Postal.Code,
-        Lat:     record.Location.Latitude,
-        Lon:     record.Location.Longitude,
+        IP:           ip,
+        Country:      country,
+        City:         city,
+        Postal:       cityRecord.Postal.Code,
+        Lat:          cityRecord.Location.Latitude,
+        Lon:          cityRecord.Location.Longitude,
+        Organization: asnRecord.AutonomousSystemOrganization,
     }
 
     return geoInfo, nil
