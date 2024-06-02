@@ -1,13 +1,14 @@
 package main
 
 import (
-	"bytes"
 	"bufio"
+	"bytes"
 	"fmt"
-	"github.com/morebaconstrips/pcapwalker/utils"
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/morebaconstrips/pcapwalker/utils"
 )
 
 func usage() {
@@ -181,6 +182,13 @@ func main() {
 	fields = []string{"telnet.data"}
 	output = runTshark(pcapFile, "telnet", fields)
 	msg(file, output)
+
+	msg(file, "***IP Analysis***")
+	geoInfos, _ := utils.PrintGeoInfoForIPs(pcapFile)
+    for _, geoInfo := range geoInfos {
+        fmt.Printf("IP: %s\nCountry: %s\nCity: %s\nPostal Code: %s\nLatitude: %f\nLongitude: %f\n\n",
+            geoInfo.IP, geoInfo.Country, geoInfo.City, geoInfo.Postal, geoInfo.Lat, geoInfo.Lon)
+    }
 
 	msg(file, "***Search for specific keywords in packets***")
 	patterns, err := getArray("data/patterns.txt")
